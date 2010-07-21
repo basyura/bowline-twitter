@@ -10,25 +10,25 @@ class Tweet < SuperModel::Base
     end
     
     def update(status)
-      twitter.update(status)
+      twitter.status(:post , status)
       poll
     end
 
     private
       def timeline
-        twitter.friends_timeline.collect {|t|
-          t.profile_image_url = t.user.profile_image_url
-          t.delete('user')
-          t.to_hash
+        twitter.timeline_for(:friends).to_a.reverse.collect {|status|
+          tweet = status.to_hash
+          tweet[:profile_image_url] = tweet[:user][:profile_image_url]
+          tweet.delete(:user)
+          tweet
         }
       end
 
       def twitter
-        httpauth = Twitter::HTTPAuth.new(
-          AppConfig.username, 
-          AppConfig.password
+        Twitter::Client.new(
+          :login    => AppConfig.username,
+          :password => AppConfig.password
         )
-        Twitter::Base.new(httpauth)
       end
   end
 end
