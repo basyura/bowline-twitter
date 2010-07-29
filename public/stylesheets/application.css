@@ -1,9 +1,9 @@
-footer input["type='text'"] {
-  width: 50px;
+.control input {
+  width: 96%;
 }
 
 .main {
-  height: 416px;
+  height: 650px;
   overflow: auto;
 }
 

@@ -1,8 +1,8 @@
-Tweet.poll
+TweetsBinder.poll
 
 Thread.new do  
   loop do
-    sleep 60
-    Tweet.poll
+    sleep 30
+    TweetsBinder.poll
   end
 end

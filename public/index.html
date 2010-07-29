@@ -17,15 +17,30 @@
       var tweets = $('#tweets');
       tweets.bowlineBind('TweetsBinder');
 
+      $('#updateText').keydown(function(e){
+        if(e.keyCode != 13) {
+          return;
+        }
+        tweets.invoke('update', $('#updateText').val());
+        $('#updateText').val('');
+        return false;
+      });
+
+      /*
       $('#updateSubmit').click(function(){
         tweets.invoke('update', $('#updateText').val());
         $('#updateText').val('');
         return false;
       });
+      */
     });
   </script>
 </head>
-  <body>
+<body>
+    <div class="control">
+      <input placeholder="What are you doing?" type="text" id="updateText">
+      <!-- <button id="updateSubmit">Update</button> -->
+    </div>
     <div class="main">
       <div id="tweets">
         <div class="item">
@@ -34,10 +49,5 @@
         </div>
       </div>
     </div>
-    
-    <footer>
-      <input placeholder="What are you doing?" type="text" id="updateText">
-      <button id="updateSubmit">Update</button>
-    </footer>
 </body>
 </html>
