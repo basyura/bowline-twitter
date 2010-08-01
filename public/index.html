@@ -26,6 +26,14 @@
         return false;
       });
 
+      $('#friends').click(function() {
+        tweets.invoke('friends');
+        });
+
+      $('#mentions').click(function() {
+        tweets.invoke('mentions');
+        });
+
       /*
       $('#updateSubmit').click(function(){
         tweets.invoke('update', $('#updateText').val());
@@ -39,6 +47,8 @@
 <body>
     <div class="control">
       <input placeholder="What are you doing?" type="text" id="updateText">
+      <input type="button" value="F" id="friends">
+      <input type="button" value="@" id="mentions">
       <!-- <button id="updateSubmit">Update</button> -->
     </div>
     <div class="main">

@@ -7,8 +7,20 @@ class TweetsBinder < Bowline::Binders::Collection
     end
 
     def poll
-      klass.poll
+      # initial より initializer の方が先によばれる
+      @mode ||= Tweet::FRIENDS
+      klass.poll(@mode)
       self.items = klass.all
+    end
+
+    def friends
+      @mode = Tweet::FRIENDS
+      poll
+    end
+
+    def mentions
+      @mode = Tweet::MENTIONS
+      poll
     end
   
     def update(status)

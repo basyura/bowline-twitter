@@ -1,12 +1,16 @@
 require "twitter"
 
 class Tweet < SuperModel::Base
+  PUBLIT   = :public
+  FRIENDS  = :friends
+  MENTIONS = :replies
+  ME       = :me
+  USER     = :user
+  #LIST     = :list
   class << self
-    def poll
+    def poll(mode = FRIENDS)
       destroy_all
-      timeline.collect do |tweet|
-        create(tweet)
-      end
+      timeline(mode).collect{|tweet| create(tweet) }
     end
 
     def update(status)
@@ -14,8 +18,8 @@ class Tweet < SuperModel::Base
     end
 
     private
-      def timeline
-        twitter.timeline_for(:friends).to_a.collect {|status|
+      def timeline(mode = FRIENDS)
+        twitter.timeline_for(mode).to_a.collect {|status|
           tweet = status.to_hash
           tweet[:profile_image_url] = tweet[:user][:profile_image_url]
           tweet.delete(:user)
