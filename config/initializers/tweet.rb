@@ -1,5 +1,6 @@
 
 TweetsBinder.poll
+MentionsBinder.poll
 
 Thread.new do  
   loop do
@@ -10,6 +11,6 @@ end
 Thread.new do  
   loop do
     sleep 60
-    TweetsBinder.mentions_notifier
+    MentionsBinder.poll
   end
 end

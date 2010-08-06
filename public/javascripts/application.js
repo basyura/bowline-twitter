@@ -10,6 +10,9 @@ jQuery(function($){
   var tweets = $('#tweets');
   tweets.bowlineBind('TweetsBinder');
 
+  var mentions = $('#mentions');
+  mentions.bowlineBind('MentionsBinder');
+
   $('#updateText').keydown(function(e){
       if(e.keyCode != 13) {
         return;
@@ -19,11 +22,15 @@ jQuery(function($){
       return false;
     });
 
-  $('#friends').click(function() {
-      tweets.invoke('friends');
+  $('#btn_friends').click(function() {
+      //tweets.invoke('friends');
+      tweets.show();
+      mentions.hide();
     });
 
-  $('#mentions').click(function() {
-      tweets.invoke('mentions');
+  $('#btn_mentions').click(function() {
+      //tweets.invoke('mentions');
+      mentions.show();
+      tweets.hide();
     });
 });

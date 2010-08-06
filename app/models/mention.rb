@@ -1,0 +1,3 @@
+
+class Mention < TweetBase
+end

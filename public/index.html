@@ -14,11 +14,17 @@
 <body>
     <div class="control">
       <input placeholder="What are you doing?" type="text" id="updateText">
-      <input type="button" value="F" id="friends">
-      <input type="button" value="@" id="mentions">
+      <input type="button" value="F" id="btn_friends">
+      <input type="button" value="@" id="btn_mentions">
     </div>
     <div class="main">
       <div id="tweets">
+        <div class="item">
+          <img class="profile_image_url">
+          <span class="text"></span>
+        </div>
+      </div>
+      <div id="mentions" style="display:none">
         <div class="item">
           <img class="profile_image_url">
           <span class="text"></span>
