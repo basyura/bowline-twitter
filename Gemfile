@@ -4,6 +4,7 @@ source 'http://rubygems.org'
 gem "bowline"
 gem "tzinfo"
 gem "twitter4r"
+gem "ruby-growl"
 
 ## Bundle the gems you use:
 # gem "bj"

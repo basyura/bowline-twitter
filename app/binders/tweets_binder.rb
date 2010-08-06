@@ -7,10 +7,17 @@ class TweetsBinder < Bowline::Binders::Collection
     end
 
     def poll
-      # initial より initializer の方が先によばれる
       @mode ||= Tweet::FRIENDS
-      klass.poll(@mode)
-      self.items = klass.all
+      tweets = klass.poll(@mode)
+
+      notify_mentions(tweets) if @mode == Tweet::MENTIONS
+
+      self.items = tweets
+      tweets
+    end
+
+    def mentions_notifier
+      notify_mentions(Tweet.find_mentions)
     end
 
     def friends
@@ -28,6 +35,26 @@ class TweetsBinder < Bowline::Binders::Collection
       klass.update(status)
       Bowline::Desktop::App.busy(false)
       poll
+    end
+
+    private
+    #
+    def notify_mentions(mentions)
+      return if mentions.length == 0
+      mentions.each do |tweet|
+       if Status.bigger?("last_mention_id" , tweet.id)
+         msg = tweet.screen_name
+         growl("reply" , "from : " + msg)
+       end
+     end
+      if Status.bigger?("last_mention_id" , mentions[0].id)
+        Status.change("last_mention_id" , mentions[0].id)
+      end
+    end
+    #
+    def growl(title , message)
+      g = Growl.new("localhost", "bowline-growl", ["bowline-growl Notification"])
+      g.notify("bowline-growl Notification", title , message)
     end
   end
 end

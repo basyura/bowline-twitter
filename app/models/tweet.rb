@@ -13,6 +13,10 @@ class Tweet < SuperModel::Base
       timeline(mode).collect{|tweet| create(tweet) }
     end
 
+    def find_mentions
+      timeline(MENTIONS).collect{|tweet| self.new(tweet) }
+    end
+
     def update(status)
       twitter.status(:post , status)
     end
@@ -22,6 +26,7 @@ class Tweet < SuperModel::Base
         twitter.timeline_for(mode).to_a.collect {|status|
           tweet = status.to_hash
           tweet[:profile_image_url] = tweet[:user][:profile_image_url]
+          tweet[:screen_name] = tweet[:user][:screen_name]
           tweet.delete(:user)
           tweet
         }
