@@ -74,11 +74,11 @@ jQuery(function($){
 
   $('#dock').Fisheye(
     {
-      maxWidth: 50,
+      maxWidth: 30,
       items: 'a',
       itemsText: 'span',
       container: '.dock-container',
-      itemWidth: 40,
+      itemWidth: 30,
       proximity: 90,
       halign : 'center'
     }
