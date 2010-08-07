@@ -20,6 +20,14 @@ class TweetsBinderBase < Bowline::Binders::Collection
       poll
     end
 
+    def openURL(url)
+      if url.split(" ").length != 1
+        self.page.alert("invalid url").call
+      else
+        `open -a Firefox #{url}`
+      end
+    end
+
     private
     #
     def growl(title , message)

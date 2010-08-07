@@ -84,3 +84,7 @@ jQuery(function($){
     }
   )
 });
+function openURL(url) {
+  $('#tweets').invoke('openURL', url);
+}
+

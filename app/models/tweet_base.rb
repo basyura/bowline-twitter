@@ -27,9 +27,21 @@ class TweetBase < SuperModel::Base
           tweet = status.to_hash
           tweet[:profile_image_url] = tweet[:user][:profile_image_url]
           tweet[:screen_name] = tweet[:user][:screen_name]
+          tweet[:text] = auto_link(tweet[:text])
+
           tweet.delete(:user)
           tweet
         }
+      end
+
+      def auto_link(text)
+          text = text.gsub(/>/,'&gt;').gsub(/</,'&lt;');
+          text = text.gsub(
+            /(http:\/\/[a-zA-Z0-9\.\/\?_\-&%]*)/ ,
+            "<a name='link' class='outer_link' href='javascript:void(0);' " +
+              "onclick='openURL(\"\\1\")'>" +
+              '\\1' + "</a>")
+          text
       end
 
       def twitter
