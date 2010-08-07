@@ -3,33 +3,48 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>Twitter</title>
-	<link rel="stylesheet" href="aristo/css/aristo.css"       type="text/css" charset="utf-8">
-  <link rel="stylesheet" href="stylesheets/application.css" type="text/css" charset="utf-8">
-	<script src="javascripts/jquery.js"       type="text/javascript" charset="utf-8"></script>
-	<script src="javascripts/jquery.chain.js" type="text/javascript" charset="utf-8"></script>
-	<script src="javascripts/json2.js"        type="text/javascript" charset="utf-8"></script>
-  <script src="javascripts/bowline.js"      type="text/javascript" charset="utf-8"></script>
-  <script src="javascripts/application.js"  type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="aristo/css/aristo.css"         type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="stylesheets/application.css"   type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="stylesheets/css_dock_menu.css" type="text/css" charset="utf-8">
+	<script src="javascripts/jquery.js"        type="text/javascript" charset="utf-8"></script>
+	<script src="javascripts/jquery.chain.js"  type="text/javascript" charset="utf-8"></script>
+	<script src="javascripts/json2.js"         type="text/javascript" charset="utf-8"></script>
+  <script src="javascripts/bowline.js"       type="text/javascript" charset="utf-8"></script>
+  <script src="javascripts/application.js"   type="text/javascript" charset="utf-8"></script>
+  <script src="javascripts/css_dock_menu.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
+      <!--
     <div class="control">
       <input placeholder="What are you doing?" type="text" id="updateText">
       <input type="button" value="F" id="btn_friends">
       <input type="button" value="@" id="btn_mentions">
     </div>
-    <div class="main">
-      <div id="tweets">
-        <div class="item">
-          <img class="profile_image_url">
-          <span class="text"></span>
-        </div>
-      </div>
-      <div id="mentions" style="display:none">
-        <div class="item">
-          <img class="profile_image_url">
-          <span class="text"></span>
-        </div>
-      </div>
+      -->
+<div class="dock" id="dock">
+  <div class="dock-container">
+    <a id="dock_home" class="dock-item" href="javascript:void(0)" >
+      <img src="imgs/home-48.png"      alt="home" /><span>Home</span></a> 
+    <a id="dock_mentions" class="dock-item" href="javascript:void(0)" >
+      <img src="imgs/email_reply-48.png"     alt="mentions" /><span>Mentions</span></a> 
+    <a id="dock_post" class="dock-item" href="javascript:void(0)" >
+      <img src="imgs/pencil-48.png" alt="post" /><span>Post</span></a> 
+  </div>
+</div>
+
+<div class="main">
+  <div id="tweets">
+    <div class="item">
+      <img class="profile_image_url">
+      <span class="text"></span>
     </div>
+  </div>
+  <div id="mentions" style="display:none">
+    <div class="item">
+      <img class="profile_image_url">
+      <span class="text"></span>
+    </div>
+  </div>
+</div>
 </body>
 </html>
