@@ -42,3 +42,10 @@
 button {
   line-height: 17px;
 }
+
+#post_text {
+  position : absolute;
+  top      : 0;
+  width    : 96%;
+  height   : 40px;
+}

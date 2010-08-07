@@ -37,9 +37,9 @@ class TweetBase < SuperModel::Base
       def auto_link(text)
           text = text.gsub(/>/,'&gt;').gsub(/</,'&lt;');
           text = text.gsub(
-            /(http:\/\/[a-zA-Z0-9\.\/\?_\-&%]*)/ ,
+            /(http:\/\/[a-zA-Z0-9\.\/\?_\-&%=]*)/ ,
             "<a name='link' class='outer_link' href='javascript:void(0);' " +
-              "onclick='openURL(\"\\1\")'>" +
+              "onclick='$.openURL(\"\\1\")'>" +
               '\\1' + "</a>")
           text
       end

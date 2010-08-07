@@ -32,45 +32,44 @@ jQuery(function($){
       tweets.hide();
     });
 
-  $('#dock_post').click(function() {
-      var text = $('#post_text');
-      if(text.size() == 0) {
-        text = $(document.createElement('textarea'));
-        text.attr("id" , "post_text");
-        text.css({
-            "position":"absolute",
-            "top"     :"0",
-            "width"   :"97%",
-            "height"  :"40px",
-          });
-        // post event
-        text.keydown(function(e) {
-            // enter
-            if(e.keyCode == 13 && e.ctrlKey) {
-              $(this).attr("disabled" , "disabled");
-              setTimeout(function() {
-                  var text = $("#post_text");
-                  tweets.invoke('update', text.val());
-                  text.val('');
-                  text.hide();
-                },100);
-            }
-            // esc
-            else if(e.keyCode == 27) {
-              $(this).hide();
-            }
-          });
-        // hide on blur
-        text.blur(function() {
-            $(this).hide();
-          });
-        $('body').append(text);
-      }
-      text.attr("disabled" , "");
-      text.show();
-      text.focus();
-    });
 
+  function openInput(msg) {
+    var text = $('#post_text');
+    if(text.size() == 0) {
+      text = $(document.createElement('textarea'));
+      text.attr("id" , "post_text");
+      // post event
+      text.keydown(function(e) {
+          // enter
+          if(e.keyCode == 13 && e.ctrlKey) {
+            $(this).attr("disabled" , "disabled");
+            setTimeout(function() {
+                var text = $("#post_text");
+                tweets.invoke('update', text.val());
+                text.val('');
+                text.hide();
+              },100);
+          }
+          // esc
+          else if(e.keyCode == 27) {
+            $(this).hide();
+          }
+        });
+      // hide on blur
+      text.blur(function() {
+          $(this).hide();
+        });
+      $('body').append(text);
+    }
+    text.attr("disabled" , "");
+    text.show();
+    text.focus();
+    if(typeof(msg) == "string") {
+      text.val(msg);
+    }
+  }
+
+  $('#dock_post').click(openInput);
 
   $('#dock').Fisheye(
     {
@@ -83,8 +82,10 @@ jQuery(function($){
       halign : 'center'
     }
   )
+  $.openURL = function(url) {
+    $('#tweets').invoke('openURL', url);
+  }
+  $.reply = function(img) {
+    openInput("@" + $(img).parent().find(".screen_name").html() + " ");
+  }
 });
-function openURL(url) {
-  $('#tweets').invoke('openURL', url);
-}
-
