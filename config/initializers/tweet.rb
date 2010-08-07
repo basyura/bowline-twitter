@@ -5,12 +5,20 @@ MentionsBinder.poll
 Thread.new do  
   loop do
     sleep 30
-    TweetsBinder.poll
+    begin
+      TweetsBinder.poll
+    rescue => e
+      puts e
+    end
   end
 end
 Thread.new do  
   loop do
-    sleep 60
-    MentionsBinder.poll
+    sleep 120
+    begin
+      MentionsBinder.poll
+    rescue => e
+      puts e
+    end
   end
 end
