@@ -22,14 +22,21 @@ jQuery(function($){
       return false;
     });
 
-  $('#dock_home').click(function() {
+  $('#btn_home').click(function() {
       tweets.show();
       mentions.hide();
     });
 
-  $('#dock_mentions').click(function() {
+  $('#btn_reply').click(function() {
       mentions.show();
       tweets.hide();
+    });
+
+  $('img' , $('.control')).mouseover(function(ev){
+      ev.target.style.backgroundColor = "#8ec1da";
+    });
+  $('img' , $('.control')).mouseout(function(ev){
+      ev.target.style.backgroundColor = "";
     });
 
 
@@ -69,7 +76,7 @@ jQuery(function($){
     }
   }
 
-  $('#dock_post').click(openInput);
+  $('#btn_post').click(openInput);
 
   $('#dock').Fisheye(
     {
