@@ -17,7 +17,9 @@ class TweetsBinderBase < Bowline::Binders::Collection
       #Bowline::Desktop::App.busy(true)
       klass.update(status)
       #Bowline::Desktop::App.busy(false)
-      poll
+      Thread.new do
+        poll
+      end
     end
 
     def openURL(url)
