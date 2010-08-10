@@ -4,8 +4,16 @@ class TweetsBinder < TweetsBinderBase
   class << self
     def poll
       puts "poll tweets"
-      self.items = klass.poll(TweetBase::FRIENDS)
-      #self.items = klass.poll(:tottoruby)
+      @mode ||= TweetBase::FRIENDS
+      self.items = klass.poll(@mode)
+    end
+    def change_list(mode)
+      puts "change_list to #{mode}"
+      @mode = mode.to_sym
+      poll
+    end
+    def lists
+      callback ["master","tottoruby"]
     end
   end
 end

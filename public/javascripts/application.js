@@ -39,6 +39,41 @@ jQuery(function($){
       ev.target.style.backgroundColor = "";
     });
 
+  $('#btn_list').click(function(){
+      tweets.invoke('lists',function(res){
+          var list = $('#list_area');
+          if(list.size() == 0) {
+            list = $(document.createElement('div'));
+            list.attr("id" , "list_area");
+            list.css({position : "absolute" , top : "0"});
+            $('body').append(list);
+            list.append(
+              $("<div><a href='javascript:void(0)' onclick='$.select_list(this)' >" +
+                   "friends</a><div>"));
+            for(var i = 0 ; i < res.length ; i++) {
+              list.append(
+                $("<div><a href='javascript:void(0)' onclick='$.select_list(this)' >" + 
+                    res[i] + "</a><div>"));
+            }
+          }
+          list.show();
+        });
+    });
+
+  $('#btn_post').click(openInput);
+
+  $.openURL = function(url) {
+    $('#tweets').invoke('openURL', url);
+  }
+
+  $.reply = function(img) {
+    openInput("@" + $(img).parent().find(".screen_name").html() + " ");
+  }
+
+  $.select_list = function(a) {
+    tweets.invoke('change_list', a.innerHTML);
+    $('#list_area').hide();
+  }
 
   function openInput(msg) {
     var text = $('#post_text');
@@ -74,25 +109,5 @@ jQuery(function($){
     if(typeof(msg) == "string") {
       text.val(msg);
     }
-  }
-
-  $('#btn_post').click(openInput);
-
-  $('#dock').Fisheye(
-    {
-      maxWidth: 30,
-      items: 'a',
-      itemsText: 'span',
-      container: '.dock-container',
-      itemWidth: 30,
-      proximity: 90,
-      halign : 'center'
-    }
-  )
-  $.openURL = function(url) {
-    $('#tweets').invoke('openURL', url);
-  }
-  $.reply = function(img) {
-    openInput("@" + $(img).parent().find(".screen_name").html() + " ");
   }
 });
