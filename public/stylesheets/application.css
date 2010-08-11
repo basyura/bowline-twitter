@@ -52,3 +52,19 @@
   width :24px;
   height:24px;
 }
+
+#list_area {
+  background-color:#0000ff;
+}
+#list_area a {
+  color:#ffffff;
+  text-decoration:none;
+  padding:3px;
+}
+#list_area a:hover {
+  color:orange;
+  text-decoration:underline;
+}
+#list_area .list_area_close {
+  background-color:gray;
+}

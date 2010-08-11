@@ -12,8 +12,8 @@ class TweetsBinder < TweetsBinderBase
       @mode = mode.to_sym
       poll
     end
-    def lists
-      callback ["master","tottoruby"]
+    def list_names
+      callback Tweet.list_names
     end
   end
 end

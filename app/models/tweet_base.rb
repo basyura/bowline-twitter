@@ -12,11 +12,21 @@ module Twitter
   end
 end
 class Twitter::Client
+  @@CACHED_LISTS_NAMES = []
   #
   def lists(username , options={})
     uri = "/#{username}/lists.json"
     response = http_connect {|conn| create_http_get_request(uri, options) }
     timeline = Twitter::List.unmarshal(response.body)
+  end
+  def list_names(username , options={})
+    # username はどこかに保持されてるはず
+    if @@CACHED_LISTS_NAMES.empty?
+      @@CACHED_LISTS_NAMES = lists(username , options).lists.collect do |list|
+        list["slug"]
+      end
+    end
+    @@CACHED_LISTS_NAMES
   end
   #
   def self.add_timeline_uri(type , uri)
@@ -28,10 +38,9 @@ class Twitter::Client
       :login    => AppConfig.username,
       :password => AppConfig.password
     )
-    client.lists(AppConfig.username).lists.each do |list|
-      name = list["slug"].to_sym
+    client.list_names(AppConfig.username).each do |name|
       uri  = "/#{AppConfig.username}/lists/#{name}/statuses.json"
-      add_timeline_uri(name , uri)
+      add_timeline_uri(name.to_sym , uri)
     end
   end
 end
@@ -58,6 +67,10 @@ class TweetBase < SuperModel::Base
 
     def update(status)
       twitter.status(:post , status)
+    end
+
+    def list_names
+      twitter.list_names(AppConfig.username)
     end
 
 

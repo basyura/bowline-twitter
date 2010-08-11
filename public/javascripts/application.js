@@ -40,13 +40,17 @@ jQuery(function($){
     });
 
   $('#btn_list').click(function(){
-      tweets.invoke('lists',function(res){
+      tweets.invoke('list_names',function(res){
           var list = $('#list_area');
           if(list.size() == 0) {
             list = $(document.createElement('div'));
             list.attr("id" , "list_area");
             list.css({position : "absolute" , top : "0"});
             $('body').append(list);
+            list.append(
+              $("<div class='list_area_close'>" + 
+                  "<a href='javascript:void(0)' onclick='$.select_list(this)' >" +
+                   "close</a><div>"));
             list.append(
               $("<div><a href='javascript:void(0)' onclick='$.select_list(this)' >" +
                    "friends</a><div>"));
@@ -71,7 +75,10 @@ jQuery(function($){
   }
 
   $.select_list = function(a) {
-    tweets.invoke('change_list', a.innerHTML);
+    var list = a.innerHTML;
+    if(list != "close") {
+      tweets.invoke('change_list', a.innerHTML);
+    }
     $('#list_area').hide();
   }
 
