@@ -10,7 +10,7 @@ class TweetsBinder < TweetsBinderBase
 
       id = Status.get("newest_id") 
       Status.change("newest_id" , tweets[0].id)
-      self.page.hilight(id).call
+      self.page.initialize_tweets(id).call
     end
     def change_list(mode)
       puts "change_list to #{mode}"

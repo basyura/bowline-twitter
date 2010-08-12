@@ -59,7 +59,6 @@
 #list_area a {
   color:#ffffff;
   text-decoration:none;
-  padding:3px;
 }
 #list_area a:hover {
   color:orange;
@@ -67,4 +66,7 @@
 }
 #list_area .list_area_close {
   background-color:gray;
+}
+.current {
+  border : 2px double orange;
 }

@@ -1,6 +1,41 @@
 jQuery(function($){
   Bowline.trace = true;
 
+  $.current = null;
+
+  $(window).keydown(function(e){
+      var tag = e.target.tagName;
+      if(tag == "INPUT" || tag == "TEXTAREA") {
+        return;
+      }
+      if(e.keyCode == 74) {
+        try {
+        var now  = $('.current');
+        var next = now.next();
+        var id = next.attr("id");
+        if(id != null && id.indexOf("tweet_") == 0) {
+          next.addClass('current');
+          now.removeClass('current');
+          window.location = "#" + id
+          $.current = id;
+        }
+      } catch(e) {
+        alert(e.message + "_ " + id);
+      }
+      }
+      else if(e.keyCode == 75) {
+        var now  = $('.current');
+        var prev = now.prev();
+        var id = prev.attr("id");
+        if(id && prev.attr("id").indexOf("tweet_") == 0) {
+          prev.addClass('current');
+          now.removeClass('current');
+          window.location = "#" + prev.attr("id");
+          $.current = prev.attr("id");
+        }
+      }
+    });
+
   $("#tweets").update(function(){
       $(this).attr({
           scrollTop: $(this).attr("scrollHeight")
@@ -23,12 +58,12 @@ jQuery(function($){
     });
 
   $('#btn_home').click(function() {
-      tweets.show();
+      tweets.show("noraml");
       mentions.hide();
     });
 
   $('#btn_reply').click(function() {
-      mentions.show();
+      mentions.show("noraml");
       tweets.hide();
     });
 
@@ -60,7 +95,7 @@ jQuery(function($){
                     res[i] + "</a><div>"));
             }
           }
-          list.show();
+          list.show("slow");
         });
     });
 
@@ -82,17 +117,32 @@ jQuery(function($){
     $('#list_area').hide();
   }
 
-  $.hilight = function(id) {
+  $.initialize_tweets = function(id) {
     $("#tweets").find(".item").each(function(){
         var tweet_id = $(this).find(".id").val();
         if(tweet_id > id) {
           $(this).find("img").css("border" , "3px double orange");
         }
-        else {
-//          $(this).find("img").css("border" , "none");
-        }
-        $(this).attr("id" , tweet_id);
+        $(this).attr("id" , "tweet_" + tweet_id);
       });
+    // set current
+    var current = null;
+    // forcely focus first tweet
+    if($(".main").scrollTop() == 0) {
+      current = $("#tweets").find(".item:first");
+    }
+    else {
+      if($.current != null) {
+        current = $("#" + $.current);
+      }
+      if(current == null || current.size() == 0) {
+        current = $("#tweets").find(".item:first");
+      }
+    }
+    current.addClass("current");
+    $.current = current.attr("id");
+ 
+    window.location = "#" + $.current;
   }
 
 
@@ -125,7 +175,7 @@ jQuery(function($){
       $('body').append(text);
     }
     text.attr("disabled" , "");
-    text.show();
+    text.show("normal");
     text.focus();
     if(typeof(msg) == "string") {
       text.val(msg);
@@ -133,6 +183,6 @@ jQuery(function($){
   }
 });
 
-function hilight(id)  {
-  $.hilight(id);
+function initialize_tweets(id)  {
+  $.initialize_tweets(id);
 }
