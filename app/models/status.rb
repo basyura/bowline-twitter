@@ -10,6 +10,10 @@ class Status < SuperModel::Base
         create(:name => name , :status => status)
       end
     end
+    def get(name)
+      v = find_by_name(name)
+      v ? v.status : nil
+    end
     def bigger?(name , status)
       m = find_by_name(name) 
       return true unless m

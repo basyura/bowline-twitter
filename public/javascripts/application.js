@@ -71,7 +71,7 @@ jQuery(function($){
   }
 
   $.reply = function(img) {
-    openInput("@" + $(img).parent().find(".screen_name").html() + " ");
+    openInput("@" + $(img).parent().find(".screen_name").val() + " ");
   }
 
   $.select_list = function(a) {
@@ -81,6 +81,20 @@ jQuery(function($){
     }
     $('#list_area').hide();
   }
+
+  $.hilight = function(id) {
+    $("#tweets").find(".item").each(function(){
+        var tweet_id = $(this).find(".id").val();
+        if(tweet_id > id) {
+          $(this).find("img").css("border" , "3px double orange");
+        }
+        else {
+//          $(this).find("img").css("border" , "none");
+        }
+        $(this).attr("id" , tweet_id);
+      });
+  }
+
 
   function openInput(msg) {
     var text = $('#post_text');
@@ -118,3 +132,7 @@ jQuery(function($){
     }
   }
 });
+
+function hilight(id)  {
+  $.hilight(id);
+}

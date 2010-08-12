@@ -5,7 +5,12 @@ class TweetsBinder < TweetsBinderBase
     def poll
       puts "poll tweets"
       @mode ||= TweetBase::FRIENDS
-      self.items = klass.poll(@mode)
+      tweets  = klass.poll(@mode)
+      self.items = tweets
+
+      id = Status.get("newest_id") 
+      Status.change("newest_id" , tweets[0].id)
+      self.page.hilight(id).call
     end
     def change_list(mode)
       puts "change_list to #{mode}"
