@@ -121,7 +121,7 @@ jQuery(function($){
     $("#tweets").find(".item").each(function(){
         var tweet_id = $(this).find(".id").val();
         if(tweet_id > id) {
-          $(this).find("img").css("border" , "3px double orange");
+          $(this).find("img").addClass("new_tweet");
         }
         $(this).attr("id" , "tweet_" + tweet_id);
       });

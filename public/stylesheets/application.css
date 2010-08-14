@@ -68,5 +68,8 @@
   background-color:gray;
 }
 .current {
-  border : 2px double orange;
+  border : 1px solid orange;
+}
+.new_tweet {
+  border : 5px double orange;
 }
