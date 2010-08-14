@@ -68,8 +68,11 @@
   background-color:gray;
 }
 .current {
-  border : 1px solid orange;
+  border-left : 4px solid orange !important;
 }
 .new_tweet {
-  border : 5px double orange;
+  border-left : 4px solid #8ec1da;
+}
+.new_tweet_separator {
+  border-top : 4px dotted #8ec1da;
 }

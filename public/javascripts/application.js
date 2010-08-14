@@ -4,12 +4,13 @@ jQuery(function($){
   $.current = null;
 
   $(window).keydown(function(e){
+      Bowline.log("keyCode = " + e.keyCode);
       var tag = e.target.tagName;
       if(tag == "INPUT" || tag == "TEXTAREA") {
         return;
       }
+      // j
       if(e.keyCode == 74) {
-        try {
         var now  = $('.current');
         var next = now.next();
         var id = next.attr("id");
@@ -19,10 +20,14 @@ jQuery(function($){
           window.location = "#" + id
           $.current = id;
         }
-      } catch(e) {
-        alert(e.message + "_ " + id);
+        else {
+          var now  = $('.current');
+          Bowline.log("no next and now's size = " + now.size());
+          window.location = "#" + id
+          $.current = id;
+        }
       }
-      }
+      // k
       else if(e.keyCode == 75) {
         var now  = $('.current');
         var prev = now.prev();
@@ -33,6 +38,44 @@ jQuery(function($){
           window.location = "#" + prev.attr("id");
           $.current = prev.attr("id");
         }
+      }
+      // o
+      else if(e.keyCode == 79) {
+        var a = $('.current').find("a");
+        if(a.size() != 0) {
+          a.click();
+        }
+      }
+      // m
+      else if(e.keyCode == 77) {
+        $('#btn_reply').click();
+      }
+      // f
+      else if(e.keyCode == 70) {
+        $('#btn_home').click();
+      }
+      // u
+      else if(e.keyCode == 85) {
+        $.openURL('http://twitter.com/' + $('.current').find(".screen_name").val());
+      }
+      // l
+      else if(e.keyCode == 76) {
+        $('#btn_list').click();
+      }
+    });
+
+  $(window).keyup(function(e){
+      var tag = e.target.tagName;
+      if(tag == "INPUT" || tag == "TEXTAREA") {
+        return;
+      }
+      // r
+      if(e.keyCode == 82) {
+        openInput("@" + $('.current').find(".screen_name").val() + " ");
+      }
+      // c
+      if(e.keyCode == 67) {
+        openInput("");
       }
     });
 
@@ -64,6 +107,9 @@ jQuery(function($){
 
   $('#btn_reply').click(function() {
       mentions.show("noraml");
+      var item = mentions.find(".item:first");
+      item.addClass('.current');
+      $.current = item.attr("id");
       tweets.hide();
     });
 
@@ -112,16 +158,20 @@ jQuery(function($){
   $.select_list = function(a) {
     var list = a.innerHTML;
     if(list != "close") {
-      tweets.invoke('change_list', a.innerHTML);
+      setTimeout(function(){tweets.invoke('change_list', a.innerHTML)}, 100);
     }
     $('#list_area').hide();
+    $('#btn_home').click();
   }
 
   $.initialize_tweets = function(id) {
     $("#tweets").find(".item").each(function(){
         var tweet_id = $(this).find(".id").val();
         if(tweet_id > id) {
-          $(this).find("img").addClass("new_tweet");
+          $(this).addClass("new_tweet");
+        }
+        else if(tweet_id == id) {
+          $(this).addClass("new_tweet_separator");
         }
         $(this).attr("id" , "tweet_" + tweet_id);
       });
@@ -145,6 +195,15 @@ jQuery(function($){
     window.location = "#" + $.current;
   }
 
+  function set_current(item) {
+    $('.current').removeClass('current');
+    item.addClass('.current');
+    $.current = item.attr('id');
+  }
+
+  function jumpCurrent() {
+    window.location = "#" + $.current;
+  }
 
   function openInput(msg) {
     var text = $('#post_text');
@@ -156,6 +215,7 @@ jQuery(function($){
           // enter
           if(e.keyCode == 13 && e.ctrlKey) {
             $(this).attr("disabled" , "disabled");
+            $(this).blur();
             setTimeout(function() {
                 var text = $("#post_text");
                 tweets.invoke('update', text.val());
@@ -166,6 +226,8 @@ jQuery(function($){
           // esc
           else if(e.keyCode == 27) {
             $(this).hide();
+            $(this).blur();
+            jumpCurrent();
           }
         });
       // hide on blur
@@ -175,7 +237,7 @@ jQuery(function($){
       $('body').append(text);
     }
     text.attr("disabled" , "");
-    text.show("normal");
+    text.show();
     text.focus();
     if(typeof(msg) == "string") {
       text.val(msg);

@@ -17,7 +17,7 @@ Thread.new do
   sleep 5
   MentionsBinder.poll
   loop do
-    sleep 120
+    sleep 130
     begin
       MentionsBinder.poll
     rescue => e

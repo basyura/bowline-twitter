@@ -2,10 +2,11 @@ class MentionsBinder < TweetsBinderBase
   bind Mention
   class << self
     def poll
-      puts "poll mentions"
+      puts "#{Time.now} poll mentions start"
       mentions = klass.poll(TweetBase::MENTIONS)
       notify_mentions(mentions)
       self.items = mentions
+      puts "#{Time.now} poll mentions end"
     end
     private
     #
