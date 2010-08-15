@@ -1,7 +1,6 @@
-// TODO
-// □ id の二重持ちをしない。tweet かの判定は .item で判断する。
-//      tweet と reply でかぶる場合もある
-//
+/*
+ *
+ */
 jQuery(function($){
   Bowline.trace = true;
 
@@ -13,7 +12,7 @@ jQuery(function($){
   var current_id_    = 0;
   // key down event
   keydown_event_['j'] = function(e) {
-    var now  = $('.current');
+    var now  = get_current();
     var next = now.next();
     var id = next.attr("id");
     if(id && next.hasClass("item")) {
@@ -28,7 +27,7 @@ jQuery(function($){
     }
   };
   keydown_event_['k'] = function(e) {
-    var now  = $('.current');
+    var now  = get_current();
     var prev = now.prev();
     var id = prev.attr("id");
     if(id && prev.hasClass('item')) {
@@ -37,7 +36,7 @@ jQuery(function($){
     }
   };
   keydown_event_['o'] = function(e) {
-    var a = $('.current').find("a");
+    var a = get_current().find("a");
     if(a.size() != 0) {
       a.click();
     }
@@ -57,7 +56,7 @@ jQuery(function($){
 
   // key up event
   keyup_event_['r'] = function(e) {
-    var current = $('.current')
+    var current = get_current();
     var text = "@" + current.find(".screen_name").val() + " ";
     var id   = current.find('.id').val();
     openInput(text , id);
@@ -151,7 +150,8 @@ jQuery(function($){
   }
 
   $.reply = function(img) {
-    openInput("@" + $(img).parent().find(".screen_name").val() + " ");
+    openInput("@" + $(img).parent().find(".screen_name").val() + " " , 
+      $(img).parent().find('.id').val());
   }
 
   $.select_list = function(a) {
