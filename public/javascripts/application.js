@@ -1,5 +1,6 @@
 // TODO
 // □ id の二重持ちをしない。tweet かの判定は .item で判断する。
+//      tweet と reply でかぶる場合もある
 //
 jQuery(function($){
   Bowline.trace = true;
@@ -7,33 +8,30 @@ jQuery(function($){
   var keydown_event_ = {};
   var keyup_event_   = {};
 
+  var current_id_    = 0;
   // key down event
   keydown_event_['j'] = function(e) {
     var now  = $('.current');
     var next = now.next();
     var id = next.attr("id");
-    if(id != null && id.indexOf("tweet_") == 0) {
-      next.addClass('current');
-      now.removeClass('current');
-      window.location = "#" + id
-      $.current = id;
+    if(id && next.hasClass("item")) {
+      change_current(next);
+      jumpCurrent();
     }
     else {
-      var now  = $('.current');
       Bowline.log("no next and now's size = " + now.size());
-      window.location = "#" + id
-      $.current = id;
+      var now  = get_current();
+      change_current(now);
+      jumpCurrent();
     }
   };
   keydown_event_['k'] = function(e) {
     var now  = $('.current');
     var prev = now.prev();
     var id = prev.attr("id");
-    if(id && prev.attr("id").indexOf("tweet_") == 0) {
-      prev.addClass('current');
-      now.removeClass('current');
-      window.location = "#" + prev.attr("id");
-      $.current = prev.attr("id");
+    if(id && prev.hasClass('item')) {
+      change_current(prev);
+      jumpCurrent();
     }
   };
   keydown_event_['o'] = function(e) {
@@ -66,7 +64,6 @@ jQuery(function($){
     openInput("");
   }
 
-  $.current = null;
 
   $(window).keydown(function(e){ event_fire(e , keydown_event_) });
   $(window).keyup(  function(e){ event_fire(e , keyup_event_  ) });
@@ -99,17 +96,6 @@ jQuery(function($){
   var mentions = $('#mentions');
   mentions.bowlineBind('MentionsBinder');
 
-  /*
-  $('#updateText').keydown(function(e) {
-      if(e.keyCode != 13) {
-        return;
-      }
-      tweets.invoke('update', $('#updateText').val());
-      $('#updateText').val('');
-      return false;
-    });
-    */
-
   $('#btn_home').click(function() {
       tweets.show("noraml");
       mentions.hide();
@@ -118,8 +104,7 @@ jQuery(function($){
   $('#btn_reply').click(function() {
       mentions.show("noraml");
       var item = mentions.find(".item:first");
-      item.addClass('.current');
-      $.current = item.attr("id");
+      change_current(item);
       tweets.hide();
     });
 
@@ -184,7 +169,7 @@ jQuery(function($){
         else if(tweet_id == id) {
           $(this).addClass("new_tweet_separator");
         }
-        $(this).attr("id" , "tweet_" + tweet_id);
+        $(this).attr("id" , tweet_id);
       });
     // set current
     var current = null;
@@ -193,27 +178,41 @@ jQuery(function($){
       current = $("#tweets").find(".item:first");
     }
     else {
-      if($.current != null) {
-        current = $("#" + $.current);
-      }
+      current = get_current();
       if(current == null || current.size() == 0) {
         current = $("#tweets").find(".item:first");
       }
     }
-    current.addClass("current");
-    $.current = current.attr("id");
- 
-    window.location = "#" + $.current;
+    change_current(current);
+    jumpCurrent();
   }
 
-  function set_current(item) {
+  function get_current() {
+    Bowline.log("current is " + current_id_);
+    var current = null;
+    if(current_id_ != null && current_id_ != "") {
+      current = $('#' + current_id_);
+    }
+    if(current != null && current.size() == 0) {
+      current = $('.current');
+    }
+    if(current != null && current.size() == 0) {
+      current = $('.main').find('.item:first');
+    }
+    return current;
+  }
+
+  function change_current(item) {
+    if(item == null) {
+      return;
+    }
     $('.current').removeClass('current');
-    item.addClass('.current');
-    $.current = item.attr('id');
+    item.addClass('current');
+    current_id_ = item.attr('id');
   }
 
   function jumpCurrent() {
-    window.location = "#" + $.current;
+    window.location = "#" + current_id_;
   }
 
   function openInput(msg , in_reply_to) {
