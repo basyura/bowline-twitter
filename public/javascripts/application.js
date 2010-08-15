@@ -8,6 +8,8 @@ jQuery(function($){
   var keydown_event_ = {};
   var keyup_event_   = {};
 
+  var mode_ = "tweets";
+
   var current_id_    = 0;
   // key down event
   keydown_event_['j'] = function(e) {
@@ -98,13 +100,14 @@ jQuery(function($){
 
   $('#btn_home').click(function() {
       tweets.show("noraml");
+      mode_ = "tweets"
       mentions.hide();
     });
 
   $('#btn_reply').click(function() {
       mentions.show("noraml");
+      mode_ = "mentions"
       var item = mentions.find(".item:first");
-      change_current(item);
       tweets.hide();
     });
 
@@ -193,11 +196,11 @@ jQuery(function($){
     if(current_id_ != null && current_id_ != "") {
       current = $('#' + current_id_);
     }
-    if(current != null && current.size() == 0) {
+    if(current == null || current.size() == 0) {
       current = $('.current');
     }
-    if(current != null && current.size() == 0) {
-      current = $('.main').find('.item:first');
+    if(current == null || current.size() == 0) {
+      current = $('#' + mode_).find('.item:first');
     }
     return current;
   }
