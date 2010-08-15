@@ -80,7 +80,7 @@ class TweetBase < SuperModel::Base
 
     private
       def timeline(mode = FRIENDS)
-        twitter.timeline_for(mode).to_a.collect {|status|
+        twitter.timeline_for(mode , :count => 60).to_a.collect {|status|
           tweet = status.to_hash
           tweet[:profile_image_url] = tweet[:user][:profile_image_url]
           tweet[:screen_name]       = tweet[:user][:screen_name]
