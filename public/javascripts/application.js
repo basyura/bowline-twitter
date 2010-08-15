@@ -4,90 +4,92 @@
 jQuery(function($){
   Bowline.trace = true;
 
+  var keydown_event_ = {};
+  var keyup_event_   = {};
+
+  // key down event
+  keydown_event_['j'] = function(e) {
+    var now  = $('.current');
+    var next = now.next();
+    var id = next.attr("id");
+    if(id != null && id.indexOf("tweet_") == 0) {
+      next.addClass('current');
+      now.removeClass('current');
+      window.location = "#" + id
+      $.current = id;
+    }
+    else {
+      var now  = $('.current');
+      Bowline.log("no next and now's size = " + now.size());
+      window.location = "#" + id
+      $.current = id;
+    }
+  };
+  keydown_event_['k'] = function(e) {
+    var now  = $('.current');
+    var prev = now.prev();
+    var id = prev.attr("id");
+    if(id && prev.attr("id").indexOf("tweet_") == 0) {
+      prev.addClass('current');
+      now.removeClass('current');
+      window.location = "#" + prev.attr("id");
+      $.current = prev.attr("id");
+    }
+  };
+  keydown_event_['o'] = function(e) {
+    var a = $('.current').find("a");
+    if(a.size() != 0) {
+      a.click();
+    }
+  };
+  keydown_event_['m'] = function(e) {
+    $('#btn_reply').click();
+  };
+  keydown_event_['f'] = function(e) {
+    $('#btn_home').click();
+  };
+  keydown_event_['u'] = function(e) {
+    $.openURL('http://twitter.com/' + $('.current').find(".screen_name").val());
+  };
+  keydown_event_['l'] = function(e) {
+    $('#btn_list').click();
+  };
+
+  // key up event
+  keyup_event_['r'] = function(e) {
+    var current = $('.current')
+    var text = "@" + current.find(".screen_name").val() + " ";
+    var id   = current.find('.id').val();
+    openInput(text , id);
+  };
+  keyup_event_['c'] = function(e) {
+    openInput("");
+  }
+
   $.current = null;
 
-  $(window).keydown(function(e){
-      Bowline.log("keyCode = " + e.keyCode);
-      var tag = e.target.tagName;
-      if(tag == "INPUT" || tag == "TEXTAREA") {
-        return;
-      }
-      // j
-      if(e.keyCode == 74) {
-        var now  = $('.current');
-        var next = now.next();
-        var id = next.attr("id");
-        if(id != null && id.indexOf("tweet_") == 0) {
-          next.addClass('current');
-          now.removeClass('current');
-          window.location = "#" + id
-          $.current = id;
-        }
-        else {
-          var now  = $('.current');
-          Bowline.log("no next and now's size = " + now.size());
-          window.location = "#" + id
-          $.current = id;
-        }
-      }
-      // k
-      else if(e.keyCode == 75) {
-        var now  = $('.current');
-        var prev = now.prev();
-        var id = prev.attr("id");
-        if(id && prev.attr("id").indexOf("tweet_") == 0) {
-          prev.addClass('current');
-          now.removeClass('current');
-          window.location = "#" + prev.attr("id");
-          $.current = prev.attr("id");
-        }
-      }
-      // o
-      else if(e.keyCode == 79) {
-        var a = $('.current').find("a");
-        if(a.size() != 0) {
-          a.click();
-        }
-      }
-      // m
-      else if(e.keyCode == 77) {
-        $('#btn_reply').click();
-      }
-      // f
-      else if(e.keyCode == 70) {
-        $('#btn_home').click();
-      }
-      // u
-      else if(e.keyCode == 85) {
-        $.openURL('http://twitter.com/' + $('.current').find(".screen_name").val());
-      }
-      // l
-      else if(e.keyCode == 76) {
-        $('#btn_list').click();
-      }
-    });
+  $(window).keydown(function(e){ event_fire(e , keydown_event_) });
+  $(window).keyup(  function(e){ event_fire(e , keyup_event_  ) });
 
-  $(window).keyup(function(e){
-      var tag = e.target.tagName;
-      if(tag == "INPUT" || tag == "TEXTAREA") {
-        return;
-      }
-      // r
-      if(e.keyCode == 82) {
-        var current = $('.current')
-        var text = "@" + current.find(".screen_name").val() + " ";
-        var id   = current.find('.id').val();
-        openInput(text , id);
-      }
-      // c
-      if(e.keyCode == 67) {
-        openInput("");
-      }
-    });
+  function event_fire(e , key_def) {
+    var tag = e.target.tagName;
+    if(tag == "INPUT" || tag == "TEXTAREA") {
+      return;
+    }
+    var key = String.fromCharCode(e.keyCode).toLowerCase();
+    var tag = e.target.tagName;
+    if(tag == "INPUT" || tag == "TEXTAREA") {
+      return;
+    }
+    var func = key_def[key];
+    if(func != null) {
+      func(e);
+    }
+  }
 
-  $("#tweets").update(function(){
+  $("#tweets").update(function() {
       $(this).attr({
-          scrollTop: $(this).attr("scrollHeight")
+          scrollTop : $(this).attr("scrollHeight")
         });
     });
 
@@ -97,7 +99,8 @@ jQuery(function($){
   var mentions = $('#mentions');
   mentions.bowlineBind('MentionsBinder');
 
-  $('#updateText').keydown(function(e){
+  /*
+  $('#updateText').keydown(function(e) {
       if(e.keyCode != 13) {
         return;
       }
@@ -105,6 +108,7 @@ jQuery(function($){
       $('#updateText').val('');
       return false;
     });
+    */
 
   $('#btn_home').click(function() {
       tweets.show("noraml");
@@ -119,15 +123,15 @@ jQuery(function($){
       tweets.hide();
     });
 
-  $('img' , $('.control')).mouseover(function(ev){
+  $('img' , $('.control')).mouseover(function(ev) {
       ev.target.style.backgroundColor = "#8ec1da";
     });
-  $('img' , $('.control')).mouseout(function(ev){
+  $('img' , $('.control')).mouseout(function(ev) {
       ev.target.style.backgroundColor = "";
     });
 
-  $('#btn_list').click(function(){
-      tweets.invoke('list_names',function(res){
+  $('#btn_list').click(function() {
+      tweets.invoke('list_names',function(res) {
           var list = $('#list_area');
           if(list.size() == 0) {
             list = $(document.createElement('div'));
@@ -153,6 +157,7 @@ jQuery(function($){
 
   $('#btn_post').click(openInput);
 
+  // ref tweet_base.rb
   $.openURL = function(url) {
     $('#tweets').invoke('openURL', url);
   }
@@ -171,7 +176,7 @@ jQuery(function($){
   }
 
   $.initialize_tweets = function(id) {
-    $("#tweets").find(".item").each(function(){
+    $("#tweets").find(".item").each(function() {
         var tweet_id = $(this).find(".id").val();
         if(tweet_id > id) {
           $(this).addClass("new_tweet");
