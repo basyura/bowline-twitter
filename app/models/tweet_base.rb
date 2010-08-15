@@ -65,8 +65,12 @@ class TweetBase < SuperModel::Base
       timeline(MENTIONS).collect{|tweet| self.new(tweet) }
     end
 
-    def update(status)
-      twitter.status(:post , status)
+    def update(status , in_reply_to = nil)
+      if in_reply_to
+        twitter.status(:reply , {:status => status , :in_reply_to_status_id => in_reply_to})
+      else
+        twitter.status(:post  , status)
+      end
     end
 
     def list_names

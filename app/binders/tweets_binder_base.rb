@@ -13,9 +13,10 @@ class TweetsBinderBase < Bowline::Binders::Collection
       notify_mentions(Tweet.find_mentions)
     end
 
-    def update(status)
+    def update(statuses)
+      puts "update #{statuses["status"]} to #{statuses["in_reply_to"]}"
       #Bowline::Desktop::App.busy(true)
-      klass.update(status)
+      klass.update(statuses["status"] , statuses["in_reply_to"])
       #Bowline::Desktop::App.busy(false)
       Thread.new do
         poll

@@ -1,3 +1,6 @@
+// TODO
+// □ id の二重持ちをしない。tweet かの判定は .item で判断する。
+//
 jQuery(function($){
   Bowline.trace = true;
 
@@ -71,7 +74,10 @@ jQuery(function($){
       }
       // r
       if(e.keyCode == 82) {
-        openInput("@" + $('.current').find(".screen_name").val() + " ");
+        var current = $('.current')
+        var text = "@" + current.find(".screen_name").val() + " ";
+        var id   = current.find('.id').val();
+        openInput(text , id);
       }
       // c
       if(e.keyCode == 67) {
@@ -205,7 +211,7 @@ jQuery(function($){
     window.location = "#" + $.current;
   }
 
-  function openInput(msg) {
+  function openInput(msg , in_reply_to) {
     var text = $('#post_text');
     if(text.size() == 0) {
       text = $(document.createElement('textarea'));
@@ -215,13 +221,14 @@ jQuery(function($){
           // enter
           if(e.keyCode == 13 && e.ctrlKey) {
             $(this).attr("disabled" , "disabled");
-            $(this).blur();
-            setTimeout(function() {
-                var text = $("#post_text");
-                tweets.invoke('update', text.val());
-                text.val('');
-                text.hide();
-              },100);
+            var text = $("#post_text");
+            tweets.invoke('update', {
+                status      : text.val() , 
+                in_reply_to : $(this).attr('in_reply_to')
+              });
+            text.val('');
+            text.hide();
+            text.blur();
           }
           // esc
           else if(e.keyCode == 27) {
@@ -232,11 +239,13 @@ jQuery(function($){
         });
       // hide on blur
       text.blur(function() {
+          $(this).attr("in_reply_to" , "");
           $(this).hide();
         });
       $('body').append(text);
     }
     text.attr("disabled" , "");
+    text.attr("in_reply_to" , in_reply_to);
     text.show();
     text.focus();
     if(typeof(msg) == "string") {
