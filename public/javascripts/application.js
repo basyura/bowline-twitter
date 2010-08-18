@@ -62,8 +62,11 @@ jQuery(function($){
     openInput(text , id);
   };
   keyup_event_['c'] = function(e) {
-    openInput("");
+    openInput(-1);
   }
+  keyup_event_['s'] = function(e) {
+    $('#btn_search').click();
+  };
 
 
   $(window).keydown(function(e){ event_fire(e , keydown_event_) });
@@ -142,6 +145,37 @@ jQuery(function($){
         });
     });
 
+  $('#btn_search').click(function() {
+      var search_area = $('#search_area');
+      if(search_area.size() == 0) {
+        search_area = $(document.createElement('div'));
+        search_area.attr("id" , "search_area");
+        var text = $(document.createElement('input'));
+        text.keydown(function(e){
+            // enter
+            if(e.keyCode == 13 && e.ctrlKey) {
+              tweets.invoke('change_search_word', text.val());
+              text.val('');
+              text.parent().hide();
+              text.blur();
+            }
+            // esc
+            else if(e.keyCode == 27) {
+              $(this).parent().hide();
+              $(this).blur();
+            }
+          });
+        var label = $(document.createElement('span'));
+        label.text('search ');
+
+        search_area.append(label);
+        search_area.append(text);
+        $('body').append(search_area);
+      }
+      search_area.show();
+      search_area.find('input:first').focus();
+    });
+  
   $('#btn_post').click(openInput);
 
   // ref tweet_base.rb

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 require 'twitter'
 
 module Twitter
@@ -9,6 +11,16 @@ module Twitter
     class << self
       def attributes; @@ATTRIBUTES; end
     end
+  end
+  class Status
+    include ModelMixin
+    @@ATTRIBUTES = [:id, :text, :source, :truncated, :created_at, 
+                    :user, :from_user, :to_user,
+                    :favorited, :in_reply_to_status_id, :in_reply_to_user_id,
+                    :in_reply_to_screen_name,
+                    :profile_image_url , :from_user_id 
+                   ]
+    attr_accessor *@@ATTRIBUTES
   end
 end
 class Twitter::Client
@@ -53,12 +65,22 @@ class TweetBase < SuperModel::Base
   MENTIONS = :replies
   ME       = :me
   USER     = :user
+  SEARCH   = :search
   @@twitter = nil
   
   class << self
     def poll(mode = FRIENDS)
       destroy_all
       timeline(mode).collect{|tweet| create(tweet) }
+    end
+
+    def search(word)
+        twitter.search(:q => word).to_a.collect{|status| 
+          tweet = status.to_hash
+          tweet[:screen_name]   = tweet[:from_user]
+          tweet[:formated_text] = nil
+          create(tweet)
+        }
     end
 
     def find_mentions

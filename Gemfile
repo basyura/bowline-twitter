@@ -5,6 +5,8 @@ gem "bowline"
 gem "tzinfo"
 gem "twitter4r"
 gem "ruby-growl"
+# for search
+gem "activesupport" , "3.0.0.beta4"
 
 ## Bundle the gems you use:
 # gem "bj"

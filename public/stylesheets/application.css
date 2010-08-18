@@ -76,3 +76,17 @@
 .new_tweet_separator {
   border-top : 4px dotted #8ec1da;
 }
+
+
+#search_area {
+  position : absolute;
+  top : 0;
+  border : 1px solid #8ec1da;
+  background-color : #8ec1da;
+}
+#search_area span {
+  color:#ffffff;
+  font-weight:bold;
+  padding:2px;
+}
+
