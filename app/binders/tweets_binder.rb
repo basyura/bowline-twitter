@@ -13,7 +13,7 @@ class TweetsBinder < TweetsBinderBase
       self.items = tweets
 
       id = Status.get("newest_id") 
-      Status.change("newest_id" , tweets[0].id)
+      Status.change("newest_id" , tweets[0].id) if tweets.length != 0
       self.page.initialize_tweets(id).call
       puts "#{Time.now} poll tweets end"
     end
