@@ -128,7 +128,7 @@ class TweetBase < SuperModel::Base
     msg = text
     msg = msg.gsub(/>/,'&gt;').gsub(/</,'&lt;');
     msg = msg.gsub(
-      /(http:\/\/[a-zA-Z0-9\.\/\?_\-&%=]*)/ ,
+      /(http:\/\/[a-zA-Z0-9\.\/\?_\-&%=#]*)/ ,
       "<a name='link' class='outer_link' href='javascript:void(0);' " +
       "onclick='$.openURL(\"\\1\")'>" +
       '\\1' + "</a>")
