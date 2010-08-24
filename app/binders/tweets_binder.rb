@@ -2,6 +2,12 @@
 class TweetsBinder < TweetsBinderBase
   bind Tweet
   class << self
+    def login
+      puts "login"
+      ret = Rubytter.authenticate?
+      puts ret
+      callback  ret
+    end
     def poll
       puts "#{Time.now} poll tweets start"
       @mode ||= TweetBase::FRIENDS

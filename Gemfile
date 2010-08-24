@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 
 gem "bowline"
 gem "tzinfo"
-gem "twitter4r"
+gem 'rubytter'
 gem "ruby-growl"
 # for search
 gem "activesupport" , "3.0.0.beta4"

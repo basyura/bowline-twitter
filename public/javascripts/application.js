@@ -134,7 +134,7 @@ jQuery(function($){
                    "close</a><div>"));
             list.append(
               $("<div><a href='javascript:void(0)' onclick='$.select_list(this)' >" +
-                   "friends</a><div>"));
+                   "friends_timeline</a><div>"));
             for(var i = 0 ; i < res.length ; i++) {
               list.append(
                 $("<div><a href='javascript:void(0)' onclick='$.select_list(this)' >" + 
@@ -293,6 +293,38 @@ jQuery(function($){
       text.val(msg);
     }
   }
+
+  // login check
+  var counter = 0;
+  while(true) {
+    var islogin = false;
+    tweets.invoke("login" , function(ret){
+        islogin = ret;
+        if(!islogin) {
+          var pin = prompt("Enter PIN:");
+        }
+      });
+    if(islogin) {
+      break;
+    }
+    counter ++;
+    if(counter > 5) {
+      alert("UnAuthorized")
+      return;
+    }
+  }
+
+  tweets.invoke('poll');
+  $.friends_timer = setInterval(function() {
+      tweets.invoke('poll');
+    } , 1000 * 30);
+
+  setTimeout(function(){ 
+      mentions.invoke('poll') 
+    } , 10000);
+  $.mentions_timer = setInterval(function() {
+      mentions.invoke('poll');
+    } , 1000 * 60);
 });
 
 function initialize_tweets(id)  {
