@@ -298,12 +298,22 @@ jQuery(function($){
   var counter = 0;
   while(true) {
     var islogin = false;
-    tweets.invoke("login" , function(ret){
+    try {
+    Bowline.invoke('AuthenticateBinder' , 'authenticate' , function(ret) {
         islogin = ret;
         if(!islogin) {
           var pin = prompt("Enter PIN:");
+          if(pin == null) {
+            counter = 5;
+          }
+          Bowline.invoke('AuthenticateBinder' , 'authenticate_pin' , pin , function(ret) {
+              islogin = ret;
+            });
         }
       });
+  } catch(e) {
+    alert(e.message);
+  }
     if(islogin) {
       break;
     }

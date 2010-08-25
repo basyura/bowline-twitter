@@ -8,11 +8,6 @@ class Rubytter
   def self.newInstance
     raise OAuth::Unauthorized unless File.exist?(BOWLINE_CONF)
     tokens = File.open(BOWLINE_CONF) {|f| f.read.split(/\n/) }
-    consumer = ::OAuth::Consumer.new(
-      BOWLINE_CONSUMER_KEY,
-      BOWLINE_CONSUMER_SECRET,
-      :site => "http://twitter.com"
-    )
     token = ::OAuth::AccessToken.new(
       consumer,
       tokens[0],
@@ -21,12 +16,32 @@ class Rubytter
     OAuthRubytter.new(token)
   end
   def self.authenticate?
-    return true
     begin
       self.newInstance.verify_credentials
       true
     rescue => e
       false
     end
+  end
+  def self.authorize_url
+    @@request_token = consumer.get_request_token
+    @@request_token.authorize_url
+  end
+  def self.authenticate_pin(pin)
+    access_token = @@request_token.get_access_token(:oauth_verifier => pin)
+    tokens = File.open(BOWLINE_CONF , "w") do |f| 
+      f.puts access_token.token
+      f.puts access_token.secret
+    end
+    authenticate?
+  end
+
+  private 
+  def self.consumer
+    consumer = ::OAuth::Consumer.new(
+      BOWLINE_CONSUMER_KEY,
+      BOWLINE_CONSUMER_SECRET,
+      :site => "http://twitter.com"
+    )
   end
 end

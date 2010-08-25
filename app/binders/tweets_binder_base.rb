@@ -1,4 +1,3 @@
-require 'bowline_rubytter'
 
 class TweetsBinderBase < Bowline::Binders::Collection
   
