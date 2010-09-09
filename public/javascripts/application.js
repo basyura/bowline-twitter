@@ -326,15 +326,22 @@ jQuery(function($){
 
   tweets.invoke('poll');
   $.friends_timer = setInterval(function() {
-      tweets.invoke('poll');
+      if($('#post_text').css('display') == 'none' || $('#post_text').size() == 0) {
+        tweets.invoke('poll');
+      }
     } , 1000 * 30);
 
   setTimeout(function(){ 
-      mentions.invoke('poll') 
+      if($('#post_text').css('display') == 'none' || $('#post_text').size() == 0) {
+        mentions.invoke('poll') 
+      }
     } , 10000);
+
   $.mentions_timer = setInterval(function() {
-      mentions.invoke('poll');
-    } , 1000 * 60);
+      if($('#post_text').css('display') == 'none' || $('#post_text').size() == 0) {
+        mentions.invoke('poll');
+      }
+    } , 1000 * 60 * 2);
 });
 
 function initialize_tweets(id)  {
