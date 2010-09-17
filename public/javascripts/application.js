@@ -4,38 +4,43 @@
 jQuery(function($){
   Bowline.trace = true;
 
-  var counter_ = 0;
   var tweets_ = null;
 
   var keydown_event_ = {};
   var keyup_event_   = {};
 
-  var mode_ = "tweets";
+  var mode_ = "friends";
 
   var current_id_    = 0;
   // key down event
   keydown_event_['j'] = function(e) {
     var now  = get_current();
     var next = now.next();
-    var id = next.attr("id");
+    var id = next.find('.id');
     if(id && next.hasClass("item")) {
       change_current(next);
-      jumpCurrent();
     }
     else {
+      var now = now.parent().next().children(':first');
       Bowline.log("no next and now's size = " + now.size());
-      var now  = get_current();
-      change_current(now);
-      jumpCurrent();
+      if(now.size() != 0) {
+        change_current(now);
+      }
     }
   };
   keydown_event_['k'] = function(e) {
     var now  = get_current();
     var prev = now.prev();
-    var id = prev.attr("id");
+    var id = prev.find('.id');
     if(id && prev.hasClass('item')) {
       change_current(prev);
-      jumpCurrent();
+    }
+    else {
+      var now = now.parent().prev().children(':last');
+      Bowline.log("no next and now's size = " + now.size());
+      if(now.size() != 0) {
+        change_current(now);
+      }
     }
   };
   keydown_event_['o'] = function(e) {
@@ -103,18 +108,13 @@ jQuery(function($){
   tweets_ = $('#tweets');
   tweets_.bowlineBind('TweetsBinder');
 
-  tweets_.update(function() {
-      $(this).attr({
-          scrollTop : $(this).attr("scrollHeight")
-        });
-    });
 
   var mentions = $('#mentions');
   mentions.bowlineBind('MentionsBinder');
 
   $('#btn_home').click(function() {
-      tweets_.show("noraml");
-      mode_ = "tweets"
+      $('#friends').show("noraml");
+      mode_ = "friends"
       mentions.hide();
     });
 
@@ -122,7 +122,7 @@ jQuery(function($){
       mentions.show("noraml");
       mode_ = "mentions"
       var item = mentions.find(".item:first");
-      tweets_.hide();
+      $('#friends').hide();
     });
 
   $('img' , $('.control')).mouseover(function(ev) {
@@ -190,6 +190,16 @@ jQuery(function($){
   
   $('#btn_post').click(openInput);
 
+  $('.main').update(function() {
+      var h = $(this).attr("scrollHeight");
+      if(h == 0) {
+        change_current(get_fist_item());
+      }
+      else {
+        $(this).attr({scrollTop : h});
+      }
+    });
+
   // ref tweet_base.rb
   $.openURL = function(url) {
     tweets_.invoke('openURL', url);
@@ -211,53 +221,35 @@ jQuery(function($){
 
   $.initialize_tweets = function(id) {
     tweets_.find(".item").each(function() {
-        var tweet_id = $(this).find(".id").val();
-        if(tweet_id > id) {
-          $(this).addClass("new_tweet");
-        }
-        else if(tweet_id == id) {
-          $(this).addClass("new_tweet_separator");
-        }
-        $(this).attr("id" , tweet_id);
+        $(this).attr("id" , $(this).find(".id").val());
       });
-    // set current
-    var current = null;
-    // forcely focus first tweet
-    if($(".main").scrollTop() == 0) {
-      current = tweets_.find(".item:first");
-    }
-    else {
-      current = get_current();
-      if(current == null || current.size() == 0) {
-        current = tweets_.find(".item:first");
-      }
-    }
+    tweets_.addClass("new_tweet_separator");
 
-    change_current(current);
-    jumpCurrent();
+    change_current(get_current());
+
     tweets_.bowlineUnbind('TweetsBinder');
 
-//    setTimeout(function() {
-    try {
-        var new_tweets = $(document.createElement('div'));
-        new_tweets.attr("id" , "tweets_" + counter);
-        counter ++;
-        new_tweets.append(
-          '<div class="item">' +
-            '<img class="profile_image_url" onclick="$.reply(this)">' +
-            '<span class="formated_text"></span>' + 
-            '<input type="hidden" class="screen_name">' +
-            '<input type="hidden" class="id">' +
-            '</div>');
+    var new_tweets = $(document.createElement('div'));
+    new_tweets.attr("id" , "tweets_" + (new Date().getTime()));
+    var item = $(document.createElement('div')).addClass('item');
+    item.append($(document.createElement('img'))
+      .addClass('profile_image_url')
+      .click(function() {
+          $.reply(this);
+        }));
+    item.append($(document.createElement('span'))
+      .addClass('formated_text'));
+    item.append($(document.createElement('input'))
+      .attr('type' , 'hidden')
+      .addClass('screen_name'));
+    item.append($(document.createElement('input'))
+      .attr('type' , 'hidden')
+      .addClass('id'));
 
-          new_tweets.insertBefore(tweets_);
-          new_tweets.bowlineBind('TweetsBinder');
-          tweets_ = new_tweets
- //       } , 100);
-     } catch(e) {
-       alert(e.message);
-     }
-
+    new_tweets.append(item);
+    new_tweets.insertBefore(tweets_);
+    new_tweets.bowlineBind('TweetsBinder');
+    tweets_ = new_tweets
   }
 
   function get_current() {
@@ -272,7 +264,12 @@ jQuery(function($){
     if(current == null || current.size() == 0) {
       current = $('#' + mode_).find('.item:first');
     }
+    current.addClass('current');
     return current;
+  }
+
+  function get_fist_item() {
+      return $('#' + mode_).find('.item:first');
   }
 
   function change_current(item) {
@@ -281,12 +278,10 @@ jQuery(function($){
     }
     $('.current').removeClass('current');
     item.addClass('current');
-    current_id_ = item.attr('id');
+    window.location = "#" + item.attr('id');
+    Bowline.log("change_current : current_id_ is " + current_id_);
   }
 
-  function jumpCurrent() {
-    window.location = "#" + current_id_;
-  }
 
   function openInput(msg , in_reply_to) {
     var text = $('#post_text');
@@ -311,7 +306,6 @@ jQuery(function($){
           else if(e.keyCode == 27) {
             $(this).hide();
             $(this).blur();
-            jumpCurrent();
           }
         });
       // hide on blur

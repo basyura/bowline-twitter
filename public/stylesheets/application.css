@@ -70,11 +70,14 @@
 .current {
   border-left : 4px solid orange !important;
 }
+.item {
+  border-left : 4px solid #e8eaeb;
+}
 .new_tweet {
   border-left : 4px solid #8ec1da;
 }
 .new_tweet_separator {
-  border-top : 4px dotted #8ec1da;
+  border-bottom : 4px dotted #8ec1da;
 }
 
 
