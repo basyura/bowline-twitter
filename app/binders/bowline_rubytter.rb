@@ -20,6 +20,9 @@ class Rubytter
       self.newInstance.verify_credentials
       true
     rescue => e
+      puts e.class.name
+      puts e.response.status
+      puts e.backtrace
       false
     end
   end

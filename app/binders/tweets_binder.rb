@@ -4,17 +4,18 @@ class TweetsBinder < TweetsBinderBase
   class << self
     def poll
       puts "#{Time.now} poll tweets start"
+
+      since_id = Status.get("newest_id") 
       @mode ||= TweetBase::FRIENDS
       if @mode == TweetBase::SEARCH
         tweets  = klass.search(@search_word)
       else
-        tweets  = klass.poll(@mode)
+        tweets  = klass.poll(@mode , since_id)
       end
       self.items = tweets
 
-      id = Status.get("newest_id") 
       Status.change("newest_id" , tweets[0].id) if tweets.length != 0
-      self.page.initialize_tweets(id).call
+      self.page.initialize_tweets(since_id).call
       puts "#{Time.now} poll tweets end"
     end
     def change_list(mode)

@@ -11,9 +11,9 @@ class TweetBase < SuperModel::Base
   
   class << self
 
-    def poll(mode = FRIENDS)
+    def poll(mode , since_id=nil)
       destroy_all
-      timeline(mode).collect{|tweet| create(tweet) }
+      timeline(mode , since_id).collect{|tweet| create(tweet) }
     end
 
     def search(word)
@@ -40,13 +40,15 @@ class TweetBase < SuperModel::Base
 
 
     private
-      def timeline(method)
+      def timeline(method , since_id)
         begin
           if list_names.include? method
             statuses = twitter.list_statuses(AppConfig.username , method)
           else
-            #statuses = twitter.send(method , :count => 60)
-            statuses = twitter.send(method)
+            option = {:count => 60}
+            option[:since_id] = since_id if since_id
+            statuses = twitter.send(method , option)
+            #statuses = twitter.send(method)
           end
           statuses.collect {|status|
             tweet = status.to_hash

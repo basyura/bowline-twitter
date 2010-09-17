@@ -4,6 +4,9 @@
 jQuery(function($){
   Bowline.trace = true;
 
+  var counter_ = 0;
+  var tweets_ = null;
+
   var keydown_event_ = {};
   var keyup_event_   = {};
 
@@ -71,8 +74,17 @@ jQuery(function($){
 
   $(window).keydown(function(e){ event_fire(e , keydown_event_) });
   $(window).keyup(  function(e){ event_fire(e , keyup_event_  ) });
+  /*
+  $(window).click(function(){
+      notifyMessage("clicked");
+    });
+    */
+  $(window).mousedown(function(){
+      notifyMessage("clicked");
+    });
 
   function event_fire(e , key_def) {
+    notifyMessage(String.fromCharCode(e.keyCode).toLowerCase());
     var tag = e.target.tagName;
     if(tag == "INPUT" || tag == "TEXTAREA") {
       return;
@@ -88,20 +100,20 @@ jQuery(function($){
     }
   }
 
-  $("#tweets").update(function() {
+  tweets_ = $('#tweets');
+  tweets_.bowlineBind('TweetsBinder');
+
+  tweets_.update(function() {
       $(this).attr({
           scrollTop : $(this).attr("scrollHeight")
         });
     });
 
-  var tweets = $('#tweets');
-  tweets.bowlineBind('TweetsBinder');
-
   var mentions = $('#mentions');
   mentions.bowlineBind('MentionsBinder');
 
   $('#btn_home').click(function() {
-      tweets.show("noraml");
+      tweets_.show("noraml");
       mode_ = "tweets"
       mentions.hide();
     });
@@ -110,7 +122,7 @@ jQuery(function($){
       mentions.show("noraml");
       mode_ = "mentions"
       var item = mentions.find(".item:first");
-      tweets.hide();
+      tweets_.hide();
     });
 
   $('img' , $('.control')).mouseover(function(ev) {
@@ -121,7 +133,7 @@ jQuery(function($){
     });
 
   $('#btn_list').click(function() {
-      tweets.invoke('list_names',function(res) {
+      tweets_.invoke('list_names',function(res) {
           var list = $('#list_area');
           if(list.size() == 0) {
             list = $(document.createElement('div'));
@@ -154,7 +166,7 @@ jQuery(function($){
         text.keydown(function(e){
             // enter
             if(e.keyCode == 13 && e.ctrlKey) {
-              tweets.invoke('change_search_word', text.val());
+              tweets_.invoke('change_search_word', text.val());
               text.val('');
               text.parent().hide();
               text.blur();
@@ -180,7 +192,7 @@ jQuery(function($){
 
   // ref tweet_base.rb
   $.openURL = function(url) {
-    $('#tweets').invoke('openURL', url);
+    tweets_.invoke('openURL', url);
   }
 
   $.reply = function(img) {
@@ -191,14 +203,14 @@ jQuery(function($){
   $.select_list = function(a) {
     var list = a.innerHTML;
     if(list != "close") {
-      setTimeout(function(){tweets.invoke('change_list', a.innerHTML)}, 100);
+      setTimeout(function(){tweets_.invoke('change_list', a.innerHTML)}, 100);
     }
     $('#list_area').hide();
     $('#btn_home').click();
   }
 
   $.initialize_tweets = function(id) {
-    $("#tweets").find(".item").each(function() {
+    tweets_.find(".item").each(function() {
         var tweet_id = $(this).find(".id").val();
         if(tweet_id > id) {
           $(this).addClass("new_tweet");
@@ -212,16 +224,40 @@ jQuery(function($){
     var current = null;
     // forcely focus first tweet
     if($(".main").scrollTop() == 0) {
-      current = $("#tweets").find(".item:first");
+      current = tweets_.find(".item:first");
     }
     else {
       current = get_current();
       if(current == null || current.size() == 0) {
-        current = $("#tweets").find(".item:first");
+        current = tweets_.find(".item:first");
       }
     }
+
     change_current(current);
     jumpCurrent();
+    tweets_.bowlineUnbind('TweetsBinder');
+
+//    setTimeout(function() {
+    try {
+        var new_tweets = $(document.createElement('div'));
+        new_tweets.attr("id" , "tweets_" + counter);
+        counter ++;
+        new_tweets.append(
+          '<div class="item">' +
+            '<img class="profile_image_url" onclick="$.reply(this)">' +
+            '<span class="formated_text"></span>' + 
+            '<input type="hidden" class="screen_name">' +
+            '<input type="hidden" class="id">' +
+            '</div>');
+
+          new_tweets.insertBefore(tweets_);
+          new_tweets.bowlineBind('TweetsBinder');
+          tweets_ = new_tweets
+ //       } , 100);
+     } catch(e) {
+       alert(e.message);
+     }
+
   }
 
   function get_current() {
@@ -263,7 +299,7 @@ jQuery(function($){
           if(e.keyCode == 13 && e.ctrlKey) {
             $(this).attr("disabled" , "disabled");
             var text = $("#post_text");
-            tweets.invoke('update', {
+            tweets_.invoke('update', {
                 status      : text.val() , 
                 in_reply_to : $(this).attr('in_reply_to')
               });
@@ -292,6 +328,10 @@ jQuery(function($){
     if(typeof(msg) == "string") {
       text.val(msg);
     }
+  }
+
+  function notifyMessage(msg) {
+    $('#message').text(msg);
   }
 
   // login check
@@ -324,10 +364,10 @@ jQuery(function($){
     }
   }
 
-  tweets.invoke('poll');
+  tweets_.invoke('poll');
   $.friends_timer = setInterval(function() {
       if($('#post_text').css('display') == 'none' || $('#post_text').size() == 0) {
-        tweets.invoke('poll');
+        tweets_.invoke('poll');
       }
     } , 1000 * 30);
 
