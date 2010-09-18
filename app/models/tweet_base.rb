@@ -42,11 +42,11 @@ class TweetBase < SuperModel::Base
     private
       def timeline(method , since_id)
         begin
+          option = {:count => 60}
+          option[:since_id] = since_id if since_id
           if list_names.include? method
-            statuses = twitter.list_statuses(AppConfig.username , method)
+            statuses = twitter.list_statuses(AppConfig.username , method , option)
           else
-            option = {:count => 60}
-            option[:since_id] = since_id if since_id
             statuses = twitter.send(method , option)
             #statuses = twitter.send(method)
           end

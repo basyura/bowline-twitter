@@ -190,6 +190,9 @@ jQuery(function($){
   
   $('#btn_post').click(openInput);
 
+
+  /*
+
   $('.main').update(function() {
       var h = $(this).attr("scrollHeight");
       if(h == 0) {
@@ -199,6 +202,7 @@ jQuery(function($){
         $(this).attr({scrollTop : h});
       }
     });
+    */
 
   // ref tweet_base.rb
   $.openURL = function(url) {
@@ -219,14 +223,16 @@ jQuery(function($){
     $('#btn_home').click();
   }
 
-  $.initialize_tweets = function(id) {
+  $.initialize_tweets = function(count) {
+    // no new tweets
+    if(count == 0) {
+      return;
+    }
+
     tweets_.find(".item").each(function() {
         $(this).attr("id" , $(this).find(".id").val());
       });
     tweets_.addClass("new_tweet_separator");
-
-    change_current(get_current());
-
     tweets_.bowlineUnbind('TweetsBinder');
 
     var new_tweets = $(document.createElement('div'));
@@ -250,6 +256,17 @@ jQuery(function($){
     new_tweets.insertBefore(tweets_);
     new_tweets.bowlineBind('TweetsBinder');
     tweets_ = new_tweets
+
+    /*
+    tweets_.update(function() {
+        var t = $('.main').attr('scrollTop');
+        $('.main').attr({
+            scrollTop : $('.main').attr("scrollHeight")
+          });
+      });
+      */
+    change_current(get_fist_item());
+    $('.main').attr({scrollTop : 0});
   }
 
   function get_current() {
@@ -378,6 +395,6 @@ jQuery(function($){
     } , 1000 * 60 * 2);
 });
 
-function initialize_tweets(id)  {
-  $.initialize_tweets(id);
+function initialize_tweets(count)  {
+  $.initialize_tweets(count);
 }
