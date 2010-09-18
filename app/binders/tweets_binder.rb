@@ -2,10 +2,14 @@
 class TweetsBinder < TweetsBinderBase
   bind Tweet
   class << self
-    def poll
-      puts "#{Time.now} poll tweets start since #{Status.get("newest_id")}"
+    # パラメータは文字列のみ？ 0 は渡せなかった
+    # boolean もだめぽ
+    # ハッシュなら渡せる
+    def poll(param = {:diff => true})
 
-      since_id = Status.get("newest_id") 
+      puts "#{Time.now} poll tweets start since #{Status.get("newest_id")} or #{param}"
+
+      since_id = param[:diff] ? Status.get("newest_id") : nil
       @mode ||= TweetBase::FRIENDS
       if @mode == TweetBase::SEARCH
         tweets  = klass.search(@search_word)
@@ -23,7 +27,7 @@ class TweetsBinder < TweetsBinderBase
       puts "change_list to #{mode}"
       Status.change("newest_id" , nil)
       @mode = mode.to_sym
-      poll
+      #poll(:diff => false);
     end
     def change_search_word(word)
       puts "change_search_word to #{word}"

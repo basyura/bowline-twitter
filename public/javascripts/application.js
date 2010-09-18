@@ -113,9 +113,13 @@ jQuery(function($){
   mentions.bowlineBind('MentionsBinder');
 
   $('#btn_home').click(function() {
-      $('#friends').show("noraml");
-      mode_ = "friends"
       mentions.hide();
+      $('#friends').show("noraml");
+      if(mode_ != 'friends') {
+        initialize_friends_area();
+        mode_ = "friends"
+        tweets_.invoke('poll' , {diff: false});
+      }
     });
 
   $('#btn_reply').click(function() {
@@ -216,10 +220,17 @@ jQuery(function($){
 
   $.select_list = function(a) {
     var list = a.innerHTML;
-    if(list != "close") {
-      setTimeout(function(){tweets_.invoke('change_list', a.innerHTML)}, 100);
+    if(list == "close" || mode_ == list) {
+      return;
     }
+    /*
+    $('#friends').show();
+    */
+
     $('#list_area').hide();
+    mode_ = list;
+    //initialize_friends_area();
+    tweets_.invoke('change_list', a.innerHTML);
     $('#btn_home').click();
   }
 
@@ -235,8 +246,26 @@ jQuery(function($){
     tweets_.addClass("new_tweet_separator");
     tweets_.bowlineUnbind('TweetsBinder');
 
-    var new_tweets = $(document.createElement('div'));
-    new_tweets.attr("id" , "tweets_" + (new Date().getTime()));
+    var new_tweets = create_tweets();
+    new_tweets.insertBefore(tweets_);
+    new_tweets.bowlineBind('TweetsBinder');
+    tweets_ = new_tweets
+
+    /*
+    tweets_.update(function() {
+        var t = $('.main').attr('scrollTop');
+        $('.main').attr({
+            scrollTop : $('.main').attr("scrollHeight")
+          });
+      });
+      */
+    change_current(get_fist_item());
+    $('.main').attr({scrollTop : 0});
+  }
+
+  function create_tweets() {
+    var tweets = $(document.createElement('div'));
+    tweets.attr("id" , "tweets_" + (new Date().getTime()));
     var item = $(document.createElement('div')).addClass('item');
     item.append($(document.createElement('img'))
       .addClass('profile_image_url')
@@ -252,21 +281,21 @@ jQuery(function($){
       .attr('type' , 'hidden')
       .addClass('id'));
 
-    new_tweets.append(item);
+    tweets.append(item);
+
+    return tweets;
+  }
+  
+  function initialize_friends_area() {
+    tweets_.bowlineUnbind('TweetsBinder');
+    var new_tweets = create_tweets();
+//    $('#friends').html("");
+// $('#friends').append(new_tweets);
     new_tweets.insertBefore(tweets_);
     new_tweets.bowlineBind('TweetsBinder');
-    tweets_ = new_tweets
+    new_tweets.nextAll().hide();
 
-    /*
-    tweets_.update(function() {
-        var t = $('.main').attr('scrollTop');
-        $('.main').attr({
-            scrollTop : $('.main').attr("scrollHeight")
-          });
-      });
-      */
-    change_current(get_fist_item());
-    $('.main').attr({scrollTop : 0});
+    tweets_ = new_tweets
   }
 
   function get_current() {
